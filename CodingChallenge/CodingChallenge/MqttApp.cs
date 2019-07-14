@@ -73,32 +73,18 @@ namespace CodingChallenge
             var coordinates = JsonConvert.DeserializeObject<CarCoordinates>(payload);
 
             var car = GetCarByIndex(coordinates.CarIndex);
-            var distance = ComputeDistance(car.LastLocation.Location, coordinates.Location);
+            var distance = Compute.Distance(car.LastLocation.Location, coordinates.Location);
 
             car.TotalDistance += distance;
 
-            var speed = ComputeSpeed(DateTimeOffset.FromUnixTimeSeconds(car.LastLocation.Timestamp), 
-                DateTimeOffset.FromUnixTimeSeconds(coordinates.Timestamp), distance);
-
+            var speed = Compute.Speed(car.LastLocation.Timestamp, coordinates.Timestamp, distance);
+            
             PublishStatus(coordinates.Timestamp, coordinates.CarIndex, "SPEED", speed);
         }
 
         private Car GetCarByIndex(int index)
         {
             return null;
-        }
-
-        private double ComputeDistance(Location lastLocation, Location currentLocation)
-        {
-            return 0;
-        }
-
-        private double ComputeSpeed(DateTimeOffset lastTime, DateTimeOffset currentTime, double distance)
-        {
-            var kph = (distance / 1000.0f) / ((currentTime - lastTime).TotalSeconds / 3600.0f);
-            var speed = kph / 1.609f;
-
-            return speed;
         }
 
         private void PublishStatus(long timestamp, int carIndex, string type, double value)
